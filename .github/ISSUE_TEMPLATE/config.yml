@@ -3,9 +3,9 @@ contact_links:
   - name: Setup help
     url: https://github.com/rajvardhan19/malik-finder/blob/main/docs/TROUBLESHOOTING.md
     about: Most install problems are covered here — start with Job Finder › Check setup.
-  - name: Questions and ideas
-    url: https://github.com/rajvardhan19/malik-finder/discussions
-    about: For anything that isn't a bug or a concrete feature request.
+  - name: Contributing guide
+    url: https://github.com/rajvardhan19/malik-finder/blob/main/CONTRIBUTING.md
+    about: How to open a pull request — main is protected, so all changes go through one.
   - name: Report a vulnerability
     url: https://github.com/rajvardhan19/malik-finder/security/advisories/new
     about: Privately, please — never in a public issue. See SECURITY.md.

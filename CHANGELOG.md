@@ -14,6 +14,15 @@ Because there is no package to install, "upgrading" means pasting the new
 
 ## [Unreleased]
 
+### Changed
+- `main` is now protected by a branch ruleset: no direct pushes, no force
+  pushes, no deletion, and three CI checks required to merge — with no admin
+  exemption. [CONTRIBUTING.md](CONTRIBUTING.md#pull-requests) documents the flow,
+  including the fork-first setup and GitHub's hold on first-time contributors'
+  Actions runs.
+- Dropped the issue-template link to Discussions, which is not enabled on the
+  repository, in favour of the contributing guide.
+
 ## [1.0.0] — 2026-07-29
 
 First public release. The project moves from a personal setup to something
