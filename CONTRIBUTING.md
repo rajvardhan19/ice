@@ -43,14 +43,20 @@ linter.
 
 ## Development setup
 
+Fork the repo on GitHub first — `main` is protected and nobody pushes to it
+directly, so a fork plus a branch is the only route in.
+
 ```bash
-git clone https://github.com/rajvardhan19/malik-finder.git
+git clone https://github.com/<your-username>/malik-finder.git
 cd malik-finder
+git remote add upstream https://github.com/rajvardhan19/malik-finder.git
 npm install          # eslint only
 npm run lint
 ```
 
-Linting is the whole of CI. It runs on every push and PR.
+CI runs three checks on every pull request — `Lint Apps Script`,
+`No personal data`, and `Manifest is valid JSON`. All three must be green before
+a PR can merge; see [Pull requests](#pull-requests).
 
 ### Working with `clasp` (optional)
 
@@ -155,18 +161,35 @@ If you find personal data already committed, please report it privately —
 
 ## Pull requests
 
-1. Branch from `main`.
+`main` is protected by a branch ruleset. Every change — including the
+maintainer's own — arrives through a pull request. Direct pushes, force pushes,
+and branch deletion are all refused, for everyone, with no admin exemption.
+
+1. Branch from `main` in your fork. Never commit to `main` itself.
 2. Keep it focused. One concern per PR.
 3. Run `npm run lint`.
 4. Update the docs in the same PR. A behaviour change with stale docs is
    incomplete.
 5. Fill in the PR template, especially the testing section.
 
+To merge, a PR needs all three CI checks green. **No approving review is
+required** — that's deliberate, because a solo maintainer can't approve their own
+PR and requiring one would deadlock the project. Review still happens; it just
+isn't mechanically enforced.
+
 Commit messages: imperative mood, meaningful subject. Conventional Commits
 (`fix:`, `feat:`, `docs:`) are welcome but not enforced.
 
 Maintainers may push small fixes directly to your branch to get a PR over the
-line — say so in the PR if you'd rather they didn't.
+line — say so in the PR if you'd rather they didn't. Your fork's branches aren't
+protected; only this repo's `main` is.
+
+### If you're opening your first PR from a fork
+
+GitHub holds Actions runs on a first-time contributor's PR until a maintainer
+clicks **Approve and run**. Until they do, your PR shows *no* checks and reports
+as blocked. That's the default anti-abuse setting, not a problem with your
+change — it clears as soon as a maintainer looks at it.
 
 ## Reporting bugs
 
