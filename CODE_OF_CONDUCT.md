@@ -38,7 +38,7 @@ Examples of unacceptable behavior include:
 
 ### A note specific to this project
 
-malik-finder deals with job searches, resumes, and rejection — subjects people
+ICE deals with job searches, resumes, and rejection — subjects people
 are often not neutral about. Two things follow:
 
 * **Never post someone else's personal data.** Issues and logs from this project

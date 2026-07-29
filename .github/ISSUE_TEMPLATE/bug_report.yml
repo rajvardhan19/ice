@@ -6,7 +6,7 @@ body:
     attributes:
       value: |
         Thanks for reporting. Two things save a lot of round-trips:
-        the **Job Finder › Check setup** output, and the failing entry from
+        the **ICE › Check setup** output, and the failing entry from
         **Extensions › Apps Script › Executions**.
 
         ⚠️ **Redact before you paste.** Both can contain Drive IDs, your email
@@ -17,9 +17,9 @@ body:
     attributes:
       label: Before filing
       options:
-        - label: I checked [Troubleshooting](https://github.com/rajvardhan19/malik-finder/blob/main/docs/TROUBLESHOOTING.md)
+        - label: I checked [Troubleshooting](https://github.com/rajvardhan19/ice/blob/main/docs/TROUBLESHOOTING.md)
           required: true
-        - label: I ran **Job Finder › Check setup**
+        - label: I ran **ICE › Check setup**
           required: true
         - label: I'm on the latest `JobTrackerSync.gs` from `main`
           required: false
@@ -52,7 +52,7 @@ body:
       label: Steps to reproduce
       placeholder: |
         1. Set Config key '…' to '…'
-        2. Job Finder › Sync now
+        2. ICE › Sync now
         3. …
     validations:
       required: true

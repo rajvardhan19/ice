@@ -47,9 +47,9 @@ Fork the repo on GitHub first — `main` is protected and nobody pushes to it
 directly, so a fork plus a branch is the only route in.
 
 ```bash
-git clone https://github.com/<your-username>/malik-finder.git
-cd malik-finder
-git remote add upstream https://github.com/rajvardhan19/malik-finder.git
+git clone https://github.com/<your-username>/ice.git
+cd ice
+git remote add upstream https://github.com/rajvardhan19/ice.git
 npm install          # eslint only
 npm run lint
 ```
@@ -89,7 +89,7 @@ Until then, **verify against a scratch spreadsheet, never your real tracker**:
    yourself and leave `Recruiter auto-send` at `FALSE`.
 3. Upload [`examples/job-inbox.sample.csv`](examples/job-inbox.sample.csv),
    convert it to a Google Sheet, rename it `Job Inbox - 2026-03-14-0813`.
-4. **Job Finder › Sync now**.
+4. **ICE › Sync now**.
 
 Then check: rows landed in the right columns, the file was renamed `[synced]`,
 a digest arrived, drafts were created, and a second sync is a no-op. That last
@@ -193,7 +193,7 @@ change — it clears as soon as a maintainer looks at it.
 
 ## Reporting bugs
 
-Use the [issue templates](https://github.com/rajvardhan19/malik-finder/issues/new/choose).
-The **Job Finder › Check setup** output and the relevant
+Use the [issue templates](https://github.com/rajvardhan19/ice/issues/new/choose).
+The **ICE › Check setup** output and the relevant
 **Apps Script › Executions** log entry are the two most useful things you can
 include — **redacted**, since both can contain email addresses and Drive IDs.

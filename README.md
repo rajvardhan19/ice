@@ -1,4 +1,8 @@
-<h1 align="center">malik-finder</h1>
+<h1 align="center">ICE</h1>
+
+<p align="center">
+  <strong>I</strong>ntelligent <strong>C</strong>areer <strong>E</strong>ngine
+</p>
 
 <p align="center">
   <em>An autonomous job-hunt pipeline that lives entirely in your Google account.</em>
@@ -37,7 +41,9 @@ agent.
 
 ## How it works
 
-Two halves that never touch the same file, joined by a Drive folder.
+Two halves that never touch the same file, joined by a Drive folder. The name is
+the pipeline: **I**ngest postings → **C**urate each into a resume match and a
+letter → **E**xecute the bookkeeping.
 
 ```mermaid
 flowchart LR
@@ -88,7 +94,7 @@ and run `setup` once. Approve the OAuth prompt (*Advanced › Go to project › 
 the "unverified app" warning is expected; the app is your own copy of the script).
 
 **3. Fill in the Config tab** — `setup` creates it. At minimum set
-**Your name** and **Job Applications folder ID**. Then **Job Finder › Check setup**
+**Your name** and **Job Applications folder ID**. Then **ICE › Check setup**
 to confirm everything is wired up.
 
 **4. Schedule the agent** — fill the placeholders in
@@ -96,7 +102,7 @@ to confirm everything is wired up.
 `13 12,23 * * *` UTC gives you 08:13 and 19:13 Eastern.
 
 **5. Watch the first run** — trigger the routine manually, confirm a
-`Job Inbox - …` sheet appears, then **Job Finder › Sync now**. Rows in the
+`Job Inbox - …` sheet appears, then **ICE › Sync now**. Rows in the
 tracker and a digest in your inbox means you're done.
 
 Don't want to wait for a real run? [Test the sync with the sample inbox](examples/README.md#testing-the-sync-with-the-sample-inbox).
@@ -169,4 +175,4 @@ discovery, per-source dedup improvements, an "archive rejected rows" action.
 
 ## License
 
-[MIT](LICENSE) © malik-finder contributors
+[MIT](LICENSE) © ICE contributors

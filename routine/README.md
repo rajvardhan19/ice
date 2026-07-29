@@ -1,6 +1,6 @@
 # The discovery routine
 
-The scheduled half of malik-finder. It searches for jobs, assembles the
+The scheduled half of ICE. It searches for jobs, assembles the
 per-application assets in Drive, and drops a `Job Inbox - <timestamp>` sheet for
 the [Apps Script](../apps-script/JobTrackerSync.gs) to ingest.
 

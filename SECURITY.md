@@ -2,7 +2,7 @@
 
 ## The short version
 
-malik-finder holds no secrets. There is no API key, no service account, no
+ICE holds no secrets. There is no API key, no service account, no
 token, no `.env`, and no server. The Apps Script runs inside your own Google
 account under your own OAuth grant, and every setting lives in your spreadsheet
 rather than in source.
@@ -56,7 +56,7 @@ If you find a way around any of these, that's a vulnerability — please report 
 
 **Don't open a public issue.**
 
-Use [GitHub private vulnerability reporting](https://github.com/rajvardhan19/malik-finder/security/advisories/new)
+Use [GitHub private vulnerability reporting](https://github.com/rajvardhan19/ice/security/advisories/new)
 on this repository. If that's unavailable, contact
 [@rajvardhan19](https://github.com/rajvardhan19) through their GitHub profile.
 

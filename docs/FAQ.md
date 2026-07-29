@@ -7,10 +7,15 @@ The only variable cost is whatever runs the discovery agent — on a Claude
 subscription, two runs a day at ten jobs a run sits comfortably inside normal
 usage.
 
-### Why the name?
+### What does ICE stand for?
 
-It finds you a *malik* — an owner, a boss. Read it as "boss finder" and it's
-almost professional.
+**Intelligent Career Engine.** It also happens to describe the pipeline: the
+agent **I**ngests postings, **C**urates them into a resume match and a cover
+letter, and the Apps Script **E**xecutes the bookkeeping — tracker, digest,
+outreach, calendar.
+
+If you came here from a US job search and read those three letters differently:
+no relation, no affiliation. It's a spreadsheet robot.
 
 ### Does it apply to jobs for me?
 

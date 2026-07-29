@@ -1,6 +1,6 @@
 # Discovery routine prompt
 
-This is the prompt the **discovery half** of malik-finder runs on a schedule. Paste it
+This is the prompt the **discovery half** of ICE runs on a schedule. Paste it
 into a Claude cloud routine (or any agent that can web-search and write to Google
 Drive) after filling in the `<<...>>` placeholders.
 

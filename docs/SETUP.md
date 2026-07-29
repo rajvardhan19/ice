@@ -72,7 +72,7 @@ Nothing leaves your account. If you'd rather not grant Gmail or Calendar, see
 [running with fewer scopes](#running-with-fewer-scopes) below.
 
 When `setup` finishes you'll have three tabs — `Tracker`, `Config`, `Dashboard` —
-a **Job Finder** menu, and three installed triggers.
+an **ICE** menu, and three installed triggers.
 
 ## 4. Fill in the Config tab
 
@@ -87,7 +87,7 @@ The rest have working defaults, but the search brief is worth ten minutes now �
 `Role keywords`, `Locations`, and especially `Exclusions`, which is what stops
 the agent handing you Staff Engineer roles. [Full reference →](CONFIGURATION.md)
 
-Then run **Job Finder › Check setup**. Every line should read `OK`. If any says
+Then run **ICE › Check setup**. Every line should read `OK`. If any says
 `MISSING` or `ERROR`, fix it before continuing — [Troubleshooting](TROUBLESHOOTING.md)
 covers each one.
 
@@ -116,7 +116,7 @@ Expected, in order:
 1. `Cover Letters/<Company> - <Role>/` subfolders appear, each with a resume
    copy, a cover letter, and an outreach doc.
 2. A `Job Inbox - YYYY-MM-DD-HHmm` sheet appears in `Job Applications`.
-3. You run **Job Finder › Sync now** (or wait up to an hour for the trigger).
+3. You run **ICE › Sync now** (or wait up to an hour for the trigger).
 4. Rows land in `Tracker`, the inbox sheet is renamed `[synced] Job Inbox - …`,
    the `Dashboard` counts move.
 5. A digest email arrives, and Gmail drafts appear for each job.

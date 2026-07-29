@@ -167,5 +167,5 @@ is worse than not drafting once.
 - **No tests.** Apps Script has no local runtime and the whole file is I/O
   against Google services. See
   [CONTRIBUTING.md](../CONTRIBUTING.md#testing-changes) for how changes are
-  actually verified — and [open an issue](https://github.com/rajvardhan19/malik-finder/issues)
+  actually verified — and [open an issue](https://github.com/rajvardhan19/ice/issues)
   if you want to fix this.

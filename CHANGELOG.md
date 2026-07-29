@@ -15,6 +15,14 @@ Because there is no package to install, "upgrading" means pasting the new
 ## [Unreleased]
 
 ### Changed
+- **Renamed the project to ICE — Intelligent Career Engine.** The repository
+  moved from `rajvardhan19/malik-finder` to `rajvardhan19/ice`; GitHub
+  permanently redirects the old URL, so existing clones and links keep working.
+  **Action required in your sheet:** the spreadsheet menu, digest sender, and
+  notification titles are now `ICE` instead of `Job Finder`. Paste the new
+  [`JobTrackerSync.gs`](apps-script/JobTrackerSync.gs) in and reload the sheet to
+  pick up the renamed menu. No data, schema, or Config change — nothing in your
+  tracker moves.
 - `main` is now protected by a branch ruleset: no direct pushes, no force
   pushes, no deletion, and three CI checks required to merge — with no admin
   exemption. [CONTRIBUTING.md](CONTRIBUTING.md#pull-requests) documents the flow,
@@ -33,7 +41,7 @@ someone else can actually install.
   `Job Applications folder ID` are now settings rather than source constants —
   there is nothing personal left in the code. `JOB_APPLICATIONS_FOLDER_ID` also
   works as a Script Property for shared sheets.
-- **`Job Finder` menu** on the tracker: *Sync now*, *Rebuild dashboard*,
+- **`ICE` menu** on the tracker: *Sync now*, *Rebuild dashboard*,
   *Check setup*, *Re-run setup*. The sheet is usable without opening the script
   editor.
 - **`checkSetup()`** — one dialog reporting tabs, Drive folder access, config
@@ -113,5 +121,5 @@ Not tagged; recorded because the design decisions still explain the code.
 - Lost hand-edited status, notes, and formatting on every run, and couldn't
   append because the Drive connector has no edit capability. Replaced by v2.
 
-[Unreleased]: https://github.com/rajvardhan19/malik-finder/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/rajvardhan19/malik-finder/releases/tag/v1.0.0
+[Unreleased]: https://github.com/rajvardhan19/ice/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/rajvardhan19/ice/releases/tag/v1.0.0

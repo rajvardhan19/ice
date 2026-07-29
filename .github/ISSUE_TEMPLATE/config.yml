@@ -1,11 +1,11 @@
 blank_issues_enabled: true
 contact_links:
   - name: Setup help
-    url: https://github.com/rajvardhan19/malik-finder/blob/main/docs/TROUBLESHOOTING.md
-    about: Most install problems are covered here — start with Job Finder › Check setup.
+    url: https://github.com/rajvardhan19/ice/blob/main/docs/TROUBLESHOOTING.md
+    about: Most install problems are covered here — start with ICE › Check setup.
   - name: Contributing guide
-    url: https://github.com/rajvardhan19/malik-finder/blob/main/CONTRIBUTING.md
+    url: https://github.com/rajvardhan19/ice/blob/main/CONTRIBUTING.md
     about: How to open a pull request — main is protected, so all changes go through one.
   - name: Report a vulnerability
-    url: https://github.com/rajvardhan19/malik-finder/security/advisories/new
+    url: https://github.com/rajvardhan19/ice/security/advisories/new
     about: Privately, please — never in a public issue. See SECURITY.md.

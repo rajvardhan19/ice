@@ -16,7 +16,7 @@ All companies, people, URLs, and salaries in these files are invented.
    to a Google Sheet (**File › Save as Google Sheets**).
 2. Rename it `Job Inbox - 2026-03-14-0813` — the `Job Inbox` prefix is what the
    script scans for.
-3. In the tracker, **Job Finder › Sync now**.
+3. In the tracker, **ICE › Sync now**.
 
 Three rows should land in `Tracker`, the file should be renamed
 `[synced] Job Inbox - …`, and you should get a digest email. Delete the rows and
