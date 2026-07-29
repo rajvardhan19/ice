@@ -25,6 +25,6 @@
     "check": "npm run lint && npm run check:privacy"
   },
   "devDependencies": {
-    "eslint": "^9.13.0"
+    "eslint": "^10.8.0"
   }
 }

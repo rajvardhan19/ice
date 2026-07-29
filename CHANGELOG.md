@@ -30,6 +30,11 @@ Because there is no package to install, "upgrading" means pasting the new
   Actions runs.
 - Dropped the issue-template link to Discussions, which is not enabled on the
   repository, in favour of the contributing guide.
+- Bumped the lint toolchain and the CI actions: ESLint 9 → 10.8.0,
+  `actions/checkout` and `actions/setup-node` v4 → v7. Nothing in your sheet
+  changes. **For contributors:** ESLint 10 requires Node
+  `^20.19.0 || ^22.13.0 || >=24`, so `npm run lint` now needs a newer Node than
+  it did — if it suddenly fails to start, check `node -v` first.
 
 ## [1.0.0] — 2026-07-29
 
