@@ -1,16 +1,16 @@
 {
-  "name": "malik-finder",
+  "name": "ice",
   "version": "1.0.0",
   "private": true,
   "description": "An autonomous job-hunt pipeline that lives entirely in your Google account",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rajvardhan19/malik-finder.git"
+    "url": "git+https://github.com/rajvardhan19/ice.git"
   },
-  "homepage": "https://github.com/rajvardhan19/malik-finder#readme",
+  "homepage": "https://github.com/rajvardhan19/ice#readme",
   "bugs": {
-    "url": "https://github.com/rajvardhan19/malik-finder/issues"
+    "url": "https://github.com/rajvardhan19/ice/issues"
   },
   "keywords": [
     "job-search",

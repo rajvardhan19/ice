@@ -1,5 +1,5 @@
 /**
- * malik-finder — Job Tracker sync & automation
+ * ICE (Intelligent Career Engine) — Job Tracker sync & automation
  *
  * A container-bound Google Apps Script that turns a plain spreadsheet into a
  * job-application pipeline: it ingests the "Job Inbox" sheets a discovery agent
@@ -91,7 +91,7 @@ const CONFIG_DEFAULTS = [
 /** Simple trigger — adds a menu so the sheet is usable without the editor. */
 function onOpen() {
   SpreadsheetApp.getUi()
-    .createMenu('Job Finder')
+    .createMenu('ICE')
     .addItem('Sync now', 'syncFromBot')
     .addItem('Rebuild dashboard', 'rebuildDashboard')
     .addSeparator()
@@ -115,7 +115,7 @@ function setup() {
   applyFormats_(sh);
   buildDashboard_(ss);
   ensureTriggers_(ss);
-  ss.toast('Setup complete — fill in the Config tab next.', 'Job Finder ' + VERSION, 10);
+  ss.toast('Setup complete — fill in the Config tab next.', 'ICE ' + VERSION, 10);
 }
 
 function seedConfig_(ss) {
@@ -151,11 +151,11 @@ function getConfig_() {
   };
 }
 
-/** Reports what is and isn't wired up. Surfaced via the Job Finder menu. */
+/** Reports what is and isn't wired up. Surfaced via the ICE menu. */
 function checkSetup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const cfg = getConfig_();
-  const lines = ['Job Finder ' + VERSION];
+  const lines = ['ICE ' + VERSION];
 
   lines.push(ss.getSheetByName(DATA_SHEET_NAME) ? 'OK  Tracker tab' : 'MISSING  Tracker tab — run setup');
   lines.push(ss.getSheetByName(CONFIG_SHEET_NAME) ? 'OK  Config tab' : 'MISSING  Config tab — run setup');
@@ -184,7 +184,7 @@ function checkSetup() {
   });
 
   const ui = SpreadsheetApp.getUi();
-  ui.alert('Job Finder — setup check', lines.join('\n'), ui.ButtonSet.OK);
+  ui.alert('ICE — setup check', lines.join('\n'), ui.ButtonSet.OK);
 }
 
 function rebuildDashboard() {
@@ -272,7 +272,7 @@ function syncFromBot() {
   const sh = ss.getSheetByName(DATA_SHEET_NAME) || ss.getSheets()[0];
   const cfg = getConfig_();
   if (!cfg.folderId) {
-    ss.toast('Set "Job Applications folder ID" on the Config tab first.', 'Job Finder', 10);
+    ss.toast('Set "Job Applications folder ID" on the Config tab first.', 'ICE', 10);
     return;
   }
 
@@ -280,7 +280,7 @@ function syncFromBot() {
   try {
     folder = DriveApp.getFolderById(cfg.folderId);
   } catch (err) {
-    ss.toast('Cannot open Drive folder ' + cfg.folderId + ' — check the ID.', 'Job Finder', 10);
+    ss.toast('Cannot open Drive folder ' + cfg.folderId + ' — check the ID.', 'ICE', 10);
     return;
   }
 
@@ -329,7 +329,7 @@ function collectUrls_(sh) {
 
 // ===================== Digest email =====================
 function sendDigest_(rows, cfg) {
-  const subject = 'Job Finder: ' + rows.length + ' new ' + (rows.length === 1 ? 'job' : 'jobs');
+  const subject = 'ICE: ' + rows.length + ' new ' + (rows.length === 1 ? 'job' : 'jobs');
   let html = '<h3>' + rows.length + ' new job' + (rows.length === 1 ? '' : 's') + ' added</h3><ul>';
   rows.forEach(function (r) {
     const company = r[COL.COMPANY - 1], role = r[COL.ROLE - 1], loc = r[COL.LOCATION - 1];
@@ -340,7 +340,7 @@ function sendDigest_(rows, cfg) {
       (cover ? ' · <a href="' + cover + '">Cover letter</a>' : '') + '</li>';
   });
   html += '</ul><p>Tracker: ' + SpreadsheetApp.getActiveSpreadsheet().getUrl() + '</p>';
-  GmailApp.sendEmail(cfg.digestRecipient, subject, '', { htmlBody: html, name: 'Job Finder' });
+  GmailApp.sendEmail(cfg.digestRecipient, subject, '', { htmlBody: html, name: 'ICE' });
 }
 
 function esc_(s) {

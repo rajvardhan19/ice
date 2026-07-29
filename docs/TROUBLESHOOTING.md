@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Start with **Job Finder › Check setup**. It reports every tab, the folder, the
+Start with **ICE › Check setup**. It reports every tab, the folder, the
 config, and all three triggers in one dialog, and most problems announce
 themselves there.
 
@@ -182,7 +182,7 @@ Everything else — column widths, fonts, extra tabs — is untouched.
 ### The dashboard shows `#REF!` or wrong numbers
 
 Usually a schema edit that moved a column without updating `buildDashboard_`'s
-hardcoded letters. See [SCHEMA.md](SCHEMA.md#changing-the-schema). **Job Finder ›
+hardcoded letters. See [SCHEMA.md](SCHEMA.md#changing-the-schema). **ICE ›
 Rebuild dashboard** re-creates the tab from scratch.
 
 ### I want to start over
@@ -195,7 +195,7 @@ Delete the `Tracker` rows (keep row 1), delete the `Dashboard` tab, rename any
 
 ## Still stuck
 
-[Open an issue](https://github.com/rajvardhan19/malik-finder/issues) with the
+[Open an issue](https://github.com/rajvardhan19/ice/issues) with the
 `Check setup` output, the relevant Executions log entry, and what you expected.
 
 **Redact first** — logs can contain recruiter emails, your own address, and Drive

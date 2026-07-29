@@ -8,7 +8,7 @@ body:
         The design constraints worth knowing before you write: the discovery half
         can only **create** files in Drive, and the sync half is a single Apps
         Script file with no build step and no runtime dependencies.
-        [Architecture →](https://github.com/rajvardhan19/malik-finder/blob/main/docs/ARCHITECTURE.md)
+        [Architecture →](https://github.com/rajvardhan19/ice/blob/main/docs/ARCHITECTURE.md)
 
   - type: textarea
     id: problem
