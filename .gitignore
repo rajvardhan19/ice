@@ -1,0 +1,43 @@
+# ── Personal data ──────────────────────────────────────────────────────────
+# This repo is public. Resumes carry your phone number, home address, and
+# personal email; an exported tracker carries every company you've applied to.
+# Once pushed, they are public forever. See SECURITY.md.
+resumes/**
+!resumes/README.md
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.pages
+*.numbers
+
+# Exported trackers, wherever they end up
+Application Tracker*
+*tracker*.csv
+!examples/*.csv
+
+# ── Local config ───────────────────────────────────────────────────────────
+# Contains your Apps Script project ID
+.clasp.json
+apps-script/.clasp.json
+!apps-script/.clasp.json.example
+
+.env
+.env.*
+!.env.example
+
+# ── Tooling ────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.eslintcache
+
+# ── Editors and OS ─────────────────────────────────────────────────────────
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db

@@ -1,0 +1,19 @@
+version: 2
+updates:
+  # The only runtime "dependency" is Google's, so this covers CI and the linter.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"
+
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "chore"
+    groups:
+      lint:
+        patterns: ["eslint*"]

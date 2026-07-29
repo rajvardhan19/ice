@@ -1,0 +1,66 @@
+name: Feature request
+description: Suggest a capability or an improvement
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The design constraints worth knowing before you write: the discovery half
+        can only **create** files in Drive, and the sync half is a single Apps
+        Script file with no build step and no runtime dependencies.
+        [Architecture →](https://github.com/rajvardhan19/malik-finder/blob/main/docs/ARCHITECTURE.md)
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem?
+      description: The situation you're in, not the solution you have in mind.
+      placeholder: "When I …, I have to … by hand every time."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part does this touch?
+      options:
+        - Discovery — search, matching, cover letters
+        - Sync — ingest, dedup, formatting
+        - Tracker — schema, dashboard
+        - Email or calendar automation
+        - Setup and onboarding
+        - Docs
+        - A new runner for the discovery half
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: breaking
+    attributes:
+      label: Does it require any of these?
+      description: None are disqualifying — they just need discussion first.
+      options:
+        - label: A schema change (new or reordered columns)
+        - label: A new OAuth scope
+        - label: A new runtime dependency or build step
+        - label: Changing the agent prompt contract
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Including whether the existing Config keys nearly get you there.
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contribution
+      options:
+        - label: I'd be willing to open a PR for this

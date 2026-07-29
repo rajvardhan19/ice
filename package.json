@@ -1,0 +1,30 @@
+{
+  "name": "malik-finder",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An autonomous job-hunt pipeline that lives entirely in your Google account",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rajvardhan19/malik-finder.git"
+  },
+  "homepage": "https://github.com/rajvardhan19/malik-finder#readme",
+  "bugs": {
+    "url": "https://github.com/rajvardhan19/malik-finder/issues"
+  },
+  "keywords": [
+    "job-search",
+    "google-apps-script",
+    "automation",
+    "google-sheets",
+    "agent"
+  ],
+  "scripts": {
+    "lint": "eslint \"apps-script/**/*.gs\" eslint.config.mjs",
+    "check:privacy": "bash scripts/check-no-personal-data.sh",
+    "check": "npm run lint && npm run check:privacy"
+  },
+  "devDependencies": {
+    "eslint": "^9.13.0"
+  }
+}

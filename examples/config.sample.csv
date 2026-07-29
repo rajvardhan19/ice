@@ -1,0 +1,14 @@
+Key,Value
+Your name,Ada Lovelace
+Job Applications folder ID,1AbCdEfGhIjKlMnOpQrStUvWxYz012345
+Target companies,"Anthropic, Stripe, Ramp, Figma"
+Role keywords,"Software Engineer, Machine Learning, Data"
+Locations,"New York, Remote"
+Exclusions,"Senior, Staff, Principal, Lead, 5+ years, 7+ years, Director"
+Jobs per run,10
+Recruiter auto-send,FALSE
+Max sends per run,5
+Digest enabled,TRUE
+Digest recipient,
+Follow-up days,7
+Stale days,5

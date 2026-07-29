@@ -1,0 +1,13 @@
+# Normalise line endings on checkin
+* text=auto eol=lf
+
+# Apps Script sources are JavaScript — tell GitHub so diffs and linguist stats
+# treat them correctly instead of guessing.
+*.gs linguist-language=JavaScript diff=javascript
+
+# Shell scripts stay LF regardless of platform
+*.sh text eol=lf
+
+# Never diff or merge these as text
+*.pdf binary
+*.xlsx binary

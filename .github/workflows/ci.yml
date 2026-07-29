@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint Apps Script
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+
+  privacy:
+    name: No personal data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/check-no-personal-data.sh
+
+  manifest:
+    name: Manifest is valid JSON
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate appsscript.json
+        run: |
+          python3 -c "
+          import json, sys
+          m = json.load(open('apps-script/appsscript.json'))
+          missing = [k for k in ('timeZone', 'runtimeVersion', 'oauthScopes') if k not in m]
+          if missing:
+              sys.exit('appsscript.json is missing: ' + ', '.join(missing))
+          print('OK — %d scopes declared' % len(m['oauthScopes']))
+          "
