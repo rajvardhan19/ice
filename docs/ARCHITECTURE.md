@@ -97,7 +97,12 @@ been synced yet still counts as seen.
 6. Reapply formatting — dropdowns, status colours, the stale rule, the filter.
 7. Rename each consumed file `[synced] <name>`.
 8. If rows were added and digests are on, email the digest.
-9. Run outreach over every `Pending` row.
+9. If `Email guessing enabled`, attempt one address guess for rows with a
+   published name but no published email (opt-in, off by default).
+10. Run outreach over every `Pending` row.
+11. If `Auto-apply enabled`, submit the public application form for rows still
+    `Not Applied` on a supported ATS, up to `Max applications per run`
+    (opt-in, off by default).
 
 ### Reactive and daily
 
@@ -119,6 +124,8 @@ The system re-runs constantly, so every write is guarded.
 | Consume an inbox | `[synced]` rename | Skipped |
 | Send digest | Only when rows were actually added | No email |
 | Send outreach | Status flips `Pending` → `Sent`/`Drafted` | Nothing |
+| Guess an email | `Recruiter Email Source` set on the attempt, guessed or not | Nothing |
+| Auto-apply | `Auto-Apply Status` flips to a terminal value (`Submitted`/`Failed`/`Needs Manual Questions`) | Nothing |
 | Create calendar event | `evt_<kind>_<key>` in Document Properties | Nothing |
 | `setup` | Header rewrite is destructive-safe; `Config` is never overwritten | Same state |
 
@@ -153,6 +160,9 @@ Everything user-visible degrades rather than throws.
 | Draft creation fails | Row stays `Pending`, retried next hour |
 | Calendar unavailable | Swallowed; the property isn't set, so it retries |
 | Chart insert fails | Caught; the dashboard tables still build |
+| Guessed domain has no MX record | `Recruiter Email Source` set to `Guessed`, `Recruiter Email` stays blank — not re-attempted |
+| Auto-apply POST fails, or the page isn't a supported ATS's plain HTML form | `Auto-Apply Status` set to `Failed` — terminal, not retried |
+| Auto-apply form has an unrecognised required field | `Auto-Apply Status` set to `Needs Manual Questions` — nothing submitted |
 
 The deliberate asymmetry: a *send* failure is terminal for that row
 (`Skipped` — you'll see it), while a *draft* failure is retried. Sending twice

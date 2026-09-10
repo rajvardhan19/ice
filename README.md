@@ -38,6 +38,8 @@ agent.
 | 📬 **Digest email** | After each sync: what's new, which resume was picked, links to the posting and the cover letter. |
 | 🤝 **Guard-railed outreach** | Recruiter emails are **drafted, not sent**, until you flip a kill-switch — and even then only to addresses the agent found published, capped per run, once per job. |
 | 📅 **Calendar automation** | Set status to `Applied` and the date stamps itself. Fill in an interview date and it appears on your calendar. Deadlines and 7-day follow-ups get reminders on their own. |
+| 🚀 **Auto-apply** *(opt-in, off by default)* | Submits the public application form on Greenhouse/Lever postings — no login, no API key. Bails to "needs manual questions" rather than guess at a custom screening question. [Details →](docs/CONFIGURATION.md#auto-apply) |
+| 🔍 **Email guessing** *(opt-in, off by default)* | When a recruiter's name is published but their email isn't, optionally builds one unverified `first.last@domain` guess with a free MX check. Not verification — expect some bounces. [Details →](docs/CONFIGURATION.md#email-guessing-enabled) |
 
 ## How it works
 
@@ -125,6 +127,9 @@ source to change behaviour.
 | `Jobs per run` | `10` | Cap per scheduled run |
 | `Recruiter auto-send` | `FALSE` | **Kill-switch.** `FALSE` = drafts only |
 | `Max sends per run` | `5` | Send cap when auto-send is on |
+| `Email guessing enabled` | `FALSE` | **Opt-in.** One unverified email guess per row when the name is published but the email isn't |
+| `Auto-apply enabled` | `FALSE` | **Opt-in kill-switch.** Submits the public form on supported ATSes |
+| `Max applications per run` | `3` | Auto-apply cap when it's on |
 | `Digest enabled` | `TRUE` | Email after each sync |
 | `Digest recipient` | *(you)* | Where the digest goes |
 | `Follow-up days` | `7` | Days after applying before a nudge |
@@ -145,7 +150,16 @@ deliberate about.
   everything is a Gmail draft until you decide otherwise. Even switched on:
   published addresses only, never guessed, capped per run, once per job.
 - **The agent can't guess an email.** The prompt forbids constructing addresses
-  from name patterns. Unpublished means blank.
+  from name patterns. Unpublished means blank — unless you deliberately turn on
+  `Email guessing enabled`, which lets the *deterministic sync script* (never
+  the agent) build one unverified guess. Off by default.
+- **Auto-apply is also opt-in and off by default,** and automates the plain
+  public application form on Greenhouse/Lever postings only — no login, no API
+  key, no other job boards. It never answers a screening question it doesn't
+  recognise.
+- Both of the above are meaningfully riskier than the rest of this project —
+  read [SECURITY.md](SECURITY.md#guardrails-on-email-guessing) before turning
+  either on.
 - **Never commit your resumes.** `resumes/` and `*.xlsx` are gitignored for
   exactly this reason. Read [SECURITY.md](SECURITY.md) before you fork.
 

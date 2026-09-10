@@ -78,7 +78,16 @@ For each job, in the Job Applications folder:
    subject line on the first line, body below.
 4. Find the recruiter's name and email ONLY if they are explicitly published on
    the posting or the company site. Never guess, never construct an address
-   from a name pattern. Leave both blank if unpublished.
+   from a name pattern. Leave both blank if unpublished. (A deterministic,
+   reviewable step in the sync script may optionally build one unverified
+   guess from a published name plus the company's own domain — that is a
+   config-gated decision the sync script makes, never something you do.)
+5. Record the company's own domain (e.g. `apple.com`) in `Company Domain` if
+   your research turns it up — this is a fact about the company, not a guess
+   about a person, so the same rule in step 4 doesn't apply. Leave it blank if
+   you're not confident.
+6. Record the Drive URL of the resume copy you made in step 4.1 as
+   `Resume Link`.
 
 ## Step 5 — Emit the inbox sheet
 
@@ -86,13 +95,14 @@ Create ONE new Google Sheet in the Job Applications folder named exactly:
 
     Job Inbox - YYYY-MM-DD-HHmm      (UTC, e.g. "Job Inbox - 2026-03-14-0813")
 
-Row 1 must be exactly these 21 headers, in this order:
+Row 1 must be exactly these 26 headers, in this order:
 
     Company Name | Role | Location | Application Status | Salary | Date Found |
     Date Submitted | Link to Job Req | Source | Resume Used | Cover Letter Link |
     Match Reason | Rejection Reason | Notes | Recruiter Name | Recruiter Email |
     Outreach Status | Outreach Sent Date | Outreach Doc Link | Deadline |
-    Interview Date
+    Interview Date | Company Domain | Resume Link | Application Method |
+    Auto-Apply Status | Recruiter Email Source
 
 One row per new job. Column rules:
 
@@ -109,6 +119,12 @@ One row per new job. Column rules:
 - `Outreach Doc Link`  = URL of the Doc from step 4.3
 - `Deadline`           = YYYY-MM-DD if the posting states one, else blank
 - `Interview Date`     = blank
+- `Company Domain`     = from step 4.5, else blank
+- `Resume Link`        = from step 4.6, else blank
+- `Application Method` = blank (the sync script fills this in only if it auto-applies)
+- `Auto-Apply Status`  = blank (the sync script decides this — never set it yourself)
+- `Recruiter Email Source` = `Published` if you filled in Recruiter Email, else blank
+  (never `Guessed` — only the sync script writes that)
 
 Do NOT touch the master tracker. Do NOT rename or modify existing sheets.
 Creating new files is the only write you perform.
