@@ -14,6 +14,33 @@ Because there is no package to install, "upgrading" means pasting the new
 
 ## [Unreleased]
 
+### Added
+- ⚠️ **Auto-apply** (opt-in, off by default: `Auto-apply enabled`). Submits the
+  plain public application form on Greenhouse/Lever postings — no login, no
+  API key. Bails to `Auto-Apply Status = Needs Manual Questions` rather than
+  guess at a custom screening question; never retries a `Failed` or
+  `Needs Manual Questions` row. New Config keys: `Auto-apply enabled`,
+  `Max applications per run`, `Applicant first name`, `Applicant last name`,
+  `Applicant phone`, `Applicant LinkedIn URL`. Adds the
+  `script.external_request` OAuth scope.
+- ⚠️ **Email guessing** (opt-in, off by default: `Email guessing enabled`).
+  When a recruiter's name is published but their email isn't, the
+  deterministic sync script — never the discovery agent, whose "never guess an
+  email" rule is unchanged — can optionally build one unverified
+  `first.last@domain` guess, kept only if the domain resolves an MX record.
+  `Recruiter auto-send` still gates whether it's actually emailed. New Config
+  key: `Email guessing enabled`.
+- **Schema: 5 new `Tracker` columns**, appended so existing rows are unaffected:
+  `Company Domain`, `Resume Link`, `Application Method`, `Auto-Apply Status`,
+  `Recruiter Email Source`. `routine/PROMPT.md` now records the first two when
+  its own research turns them up.
+
+**Migration:** re-run `setup` to pick up the new columns and Config keys —
+it's idempotent and never touches your existing `Config` values. Every new
+field defaults to blank/`FALSE`, so a sync behaves exactly as before until you
+deliberately opt in. Google will re-prompt for authorisation once, for the new
+scope.
+
 ### Changed
 - `main` is now protected by a branch ruleset: no direct pushes, no force
   pushes, no deletion, and three CI checks required to merge — with no admin

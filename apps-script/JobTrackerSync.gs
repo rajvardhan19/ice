@@ -28,7 +28,7 @@
  * overwrites an existing Config tab.
  */
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 
 // ===================== Constants =====================
 const DATA_SHEET_NAME = 'Tracker';
@@ -47,7 +47,8 @@ const HEADERS = [
   'Date Submitted', 'Link to Job Req', 'Source', 'Resume Used', 'Cover Letter Link',
   'Match Reason', 'Rejection Reason', 'Notes', 'Recruiter Name',
   'Recruiter Email', 'Outreach Status', 'Outreach Sent Date', 'Outreach Doc Link',
-  'Deadline', 'Interview Date'
+  'Deadline', 'Interview Date', 'Company Domain', 'Resume Link', 'Application Method',
+  'Auto-Apply Status', 'Recruiter Email Source'
 ];
 
 // 1-based column indices. Keep in sync with HEADERS and docs/SCHEMA.md.
@@ -55,7 +56,8 @@ const COL = {
   COMPANY: 1, ROLE: 2, LOCATION: 3, STATUS: 4, SALARY: 5, DATE_FOUND: 6, DATE_SUBMITTED: 7,
   URL: 8, SOURCE: 9, RESUME: 10, COVER: 11, MATCH: 12, REJECTION: 13, NOTES: 14,
   REC_NAME: 15, REC_EMAIL: 16, OUTREACH_STATUS: 17, OUTREACH_DATE: 18,
-  OUTREACH_DOC: 19, DEADLINE: 20, INTERVIEW: 21
+  OUTREACH_DOC: 19, DEADLINE: 20, INTERVIEW: 21, COMPANY_DOMAIN: 22, RESUME_LINK: 23,
+  APPLICATION_METHOD: 24, AUTO_APPLY_STATUS: 25, REC_EMAIL_SOURCE: 26
 };
 
 const STATUS_OPTIONS = ['Not Applied', 'Applied', 'Interviewing', 'Offer', 'Rejected', 'On Hold'];
@@ -64,6 +66,14 @@ const STATUS_COLORS = {
   'Offer': '#b6d7a8', 'Rejected': '#f4cccc', 'On Hold': '#ead1dc'
 };
 const OUTREACH_OPTIONS = ['Pending', 'Sent', 'Drafted', 'Skipped', 'Replied'];
+/** Auto-apply is opt-in; see docs/CONFIGURATION.md#auto-apply and SECURITY.md#guardrails-on-auto-apply. */
+const AUTO_APPLY_OPTIONS = ['Not Applicable', 'Pending', 'Submitted', 'Needs Manual Questions', 'Failed'];
+/** Exact hostnames this script will ever POST an application to. No subdomains, no wildcards. */
+const ATS_HOSTS = {
+  'boards.greenhouse.io': 'Greenhouse',
+  'job-boards.greenhouse.io': 'Greenhouse',
+  'jobs.lever.co': 'Lever'
+};
 
 /**
  * Seeded into the Config tab on first `setup`. Every value is user-editable
@@ -81,6 +91,13 @@ const CONFIG_DEFAULTS = [
   ['Jobs per run', '10'],
   ['Recruiter auto-send', 'FALSE'],     // kill-switch: starts OFF so you review drafts first
   ['Max sends per run', '5'],
+  ['Email guessing enabled', 'FALSE'],  // OFF by default — see docs/CONFIGURATION.md#email-guessing-enabled
+  ['Auto-apply enabled', 'FALSE'],      // kill-switch: OFF by default — see docs/CONFIGURATION.md#auto-apply
+  ['Max applications per run', '3'],
+  ['Applicant first name', ''],
+  ['Applicant last name', ''],
+  ['Applicant phone', ''],
+  ['Applicant LinkedIn URL', ''],
   ['Digest enabled', 'TRUE'],
   ['Digest recipient', ''],             // blank = the account running the script
   ['Follow-up days', '7'],
@@ -138,14 +155,23 @@ function getConfig_() {
   }
   const bool = function (v, d) { return v === undefined || v === '' ? d : /^(true|yes|1|on)$/i.test(v); };
   const num = function (v, d) { var n = parseInt(v, 10); return isNaN(n) ? d : n; };
+  const digestRecipient = map['Digest recipient'] || Session.getActiveUser().getEmail();
   return {
     ownerName: map['Your name'] || '',
     folderId: map['Job Applications folder ID'] ||
       PropertiesService.getScriptProperties().getProperty(FOLDER_ID_PROPERTY) || '',
     recruiterAutoSend: bool(map['Recruiter auto-send'], false),
     maxSends: num(map['Max sends per run'], 5),
+    emailGuessingEnabled: bool(map['Email guessing enabled'], false),
+    autoApplyEnabled: bool(map['Auto-apply enabled'], false),
+    maxApplications: num(map['Max applications per run'], 3),
+    applicantFirstName: map['Applicant first name'] || '',
+    applicantLastName: map['Applicant last name'] || '',
+    applicantEmail: digestRecipient,
+    applicantPhone: map['Applicant phone'] || '',
+    applicantLinkedIn: map['Applicant LinkedIn URL'] || '',
     digestEnabled: bool(map['Digest enabled'], true),
-    digestRecipient: map['Digest recipient'] || Session.getActiveUser().getEmail(),
+    digestRecipient: digestRecipient,
     followUpDays: num(map['Follow-up days'], 7),
     staleDays: num(map['Stale days'], 5)
   };
@@ -177,6 +203,9 @@ function checkSetup() {
   lines.push('Digest: ' + (cfg.digestEnabled ? 'on → ' + cfg.digestRecipient : 'off'));
   lines.push('Recruiter auto-send: ' +
     (cfg.recruiterAutoSend ? 'ON (max ' + cfg.maxSends + '/run)' : 'off — drafts only'));
+  lines.push('Email guessing: ' + (cfg.emailGuessingEnabled ? 'ON — unverified guesses will be emailed if auto-send is also on' : 'off'));
+  lines.push('Auto-apply: ' +
+    (cfg.autoApplyEnabled ? 'ON (max ' + cfg.maxApplications + '/run, Greenhouse + Lever only)' : 'off'));
 
   const handlers = ScriptApp.getProjectTriggers().map(function (t) { return t.getHandlerFunction(); });
   ['syncFromBot', 'handleEdit', 'dailyMaintenance'].forEach(function (h) {
@@ -200,6 +229,7 @@ function applyFormats_(sh) {
   // dropdowns
   setListValidation_(sh.getRange(2, COL.STATUS, n, 1), STATUS_OPTIONS);
   setListValidation_(sh.getRange(2, COL.OUTREACH_STATUS, n, 1), OUTREACH_OPTIONS);
+  setListValidation_(sh.getRange(2, COL.AUTO_APPLY_STATUS, n, 1), AUTO_APPLY_OPTIONS);
   // conditional formatting: status colors + stale "Not Applied"
   const statusRange = sh.getRange(2, COL.STATUS, n, 1);
   const cfg = getConfig_();
@@ -313,7 +343,9 @@ function syncFromBot() {
   });
 
   if (toAppend.length && cfg.digestEnabled) sendDigest_(toAppend, cfg);
+  guessRecruiterEmails_(sh, cfg);
   processOutreach_(sh, cfg);
+  processAutoApply_(sh, cfg);
 }
 
 function collectUrls_(sh) {
@@ -355,6 +387,10 @@ function esc_(s) {
  * recruiter address must parse as an email, and the per-run send cap must not
  * be exhausted. Anything that fails one of those becomes a Gmail draft you
  * review by hand — the script never silently emails a stranger.
+ *
+ * The address here may be `Published` (the agent found it on the posting) or
+ * `Guessed` (see guessRecruiterEmails_ below, opt-in) — this function treats
+ * both the same, since `Recruiter auto-send` is the guardrail either way.
  */
 function processOutreach_(sh, cfg) {
   const lastRow = sh.getLastRow();
@@ -409,6 +445,217 @@ function docIdFromUrl_(url) {
   return m ? m[0] : '';
 }
 function isEmail_(s) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(s || '').trim()); }
+
+// ===================== Recruiter email guessing (opt-in) =====================
+/**
+ * For rows with a published recruiter name but no published email, build
+ * exactly ONE candidate address (`first.last@domain`) and keep it only if the
+ * domain resolves an MX record. This is a domain sanity check, not mailbox
+ * verification — no paid finder API, no API key, matching the rest of the
+ * project. See docs/CONFIGURATION.md#email-guessing-enabled and
+ * SECURITY.md#guardrails-on-email-guessing for the exact guarantees.
+ *
+ * `Recruiter Email Source` doubles as the "already attempted" guard, so a
+ * row is only ever guessed once — including when the guess doesn't pan out,
+ * so a domain with no mail server isn't re-checked every hour forever.
+ */
+function guessRecruiterEmails_(sh, cfg) {
+  if (!cfg.emailGuessingEnabled) return;
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) return;
+  const rows = sh.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+  const mxCache = {};
+  for (var i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    const rowNum = i + 2;
+    const email = String(r[COL.REC_EMAIL - 1] || '').trim();
+    const name = String(r[COL.REC_NAME - 1] || '').trim();
+    const domain = String(r[COL.COMPANY_DOMAIN - 1] || '').trim().toLowerCase();
+    const alreadyAttempted = String(r[COL.REC_EMAIL_SOURCE - 1] || '').trim();
+    if (email || !name || !domain || alreadyAttempted) continue;
+    const guess = buildEmailGuess_(name, domain);
+    if (guess) {
+      if (mxCache[domain] === undefined) mxCache[domain] = mxRecordExists_(domain);
+      if (mxCache[domain]) sh.getRange(rowNum, COL.REC_EMAIL).setValue(guess);
+    }
+    // Marked "Guessed" even on a failed/undomained attempt so it isn't retried every sync.
+    sh.getRange(rowNum, COL.REC_EMAIL_SOURCE).setValue('Guessed');
+  }
+}
+
+/** first.last@domain — the most common corporate convention. One guess, never a spray. */
+function buildEmailGuess_(fullName, domain) {
+  const parts = String(fullName).trim().split(/\s+/).filter(function (p) { return /^[A-Za-z'-]+$/.test(p); });
+  if (parts.length < 2) return '';
+  const first = parts[0].toLowerCase();
+  const last = parts[parts.length - 1].toLowerCase();
+  return first + '.' + last + '@' + domain;
+}
+
+/** Free DNS-over-HTTPS MX lookup — no API key, no account. */
+function mxRecordExists_(domain) {
+  try {
+    const res = UrlFetchApp.fetch(
+      'https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=MX',
+      { muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) return false;
+    const data = JSON.parse(res.getContentText());
+    return data.Status === 0 && Array.isArray(data.Answer) && data.Answer.length > 0;
+  } catch (err) {
+    return false; // network hiccup -> treat as unverified, never guess blind
+  }
+}
+
+// ===================== Auto-apply (opt-in) =====================
+/**
+ * Submits the public Greenhouse/Lever application form for rows still
+ * `Not Applied`, up to `Max applications per run`. No login, no account, no
+ * API key — this is the same anonymous form a browser submits.
+ *
+ * Never answers a required field it doesn't recognise: a posting with a
+ * custom screening question becomes `Needs Manual Questions`, not a guess.
+ * A row that fails or needs manual questions is never retried automatically
+ * — same "don't repeat an irreversible action" rule as recruiter outreach.
+ */
+function processAutoApply_(sh, cfg) {
+  if (!cfg.autoApplyEnabled) return;
+  const lastRow = sh.getLastRow();
+  if (lastRow < 2) return;
+  const rows = sh.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+  let applied = 0;
+  for (var i = 0; i < rows.length; i++) {
+    if (applied >= cfg.maxApplications) break;
+    const r = rows[i];
+    const rowNum = i + 2;
+    if (String(r[COL.STATUS - 1] || '').trim() !== 'Not Applied') continue;
+    const autoStatus = String(r[COL.AUTO_APPLY_STATUS - 1] || '').trim();
+    if (autoStatus && autoStatus !== 'Pending') continue; // Submitted/Failed/Needs Manual/Not Applicable are terminal
+
+    const url = String(r[COL.URL - 1] || '').trim();
+    const ats = detectAts_(url);
+    if (!ats) {
+      sh.getRange(rowNum, COL.AUTO_APPLY_STATUS).setValue('Not Applicable');
+      continue;
+    }
+
+    applied++; // counts against the cap regardless of outcome -- it's one live request to a real employer's site either way
+    const resumeUrl = String(r[COL.RESUME_LINK - 1] || '').trim();
+    let result;
+    try {
+      result = submitApplication_(url, ats, resumeUrl, cfg);
+    } catch (err) {
+      result = 'failed';
+    }
+    if (result === 'submitted') {
+      sh.getRange(rowNum, COL.AUTO_APPLY_STATUS).setValue('Submitted');
+      sh.getRange(rowNum, COL.APPLICATION_METHOD).setValue('Auto — ' + ats);
+      sh.getRange(rowNum, COL.STATUS).setValue('Applied');
+      sh.getRange(rowNum, COL.DATE_SUBMITTED).setValue(new Date());
+    } else if (result === 'needs_manual') {
+      sh.getRange(rowNum, COL.AUTO_APPLY_STATUS).setValue('Needs Manual Questions');
+    } else {
+      sh.getRange(rowNum, COL.AUTO_APPLY_STATUS).setValue('Failed');
+    }
+  }
+}
+
+/** Exact-hostname match only — never a substring/wildcard match. */
+function detectAts_(url) {
+  const m = String(url || '').match(/^https?:\/\/([^/]+)/i);
+  return m ? (ATS_HOSTS[m[1].toLowerCase()] || '') : '';
+}
+
+/**
+ * Fetches the posting's live application page, fills every field it can
+ * confidently map to the Applicant profile, and submits. Field names are
+ * discovered from the page rather than hardcoded, since Greenhouse/Lever can
+ * change markup at any time without warning.
+ */
+function submitApplication_(url, ats, resumeUrl, cfg) {
+  // Lever's application form usually lives on a separate /apply sub-page, not
+  // the job-description page itself -- unlike Greenhouse, which embeds it inline.
+  const formUrl = (ats === 'Lever' && !/\/apply\/?$/i.test(url))
+    ? url.replace(/\/$/, '') + '/apply' : url;
+  const page = UrlFetchApp.fetch(formUrl, { muteHttpExceptions: true });
+  if (page.getResponseCode() !== 200) return 'failed';
+  const form = parseForm_(page.getContentText(), formUrl);
+  if (!form || !form.fields.length) return 'failed'; // most likely a JS-rendered page we can't read statically
+
+  const profile = {
+    first_name: cfg.applicantFirstName, last_name: cfg.applicantLastName,
+    email: cfg.applicantEmail, phone: cfg.applicantPhone, linkedin: cfg.applicantLinkedIn
+  };
+  let resumeBlob = null;
+  if (resumeUrl) {
+    try { resumeBlob = DriveApp.getFileById(docIdFromUrl_(resumeUrl)).getBlob(); } catch (err) { /* proceed without it */ }
+  }
+
+  const payload = {};
+  for (var i = 0; i < form.fields.length; i++) {
+    const f = form.fields[i];
+    if (f.type === 'hidden') { payload[f.name] = f.value || ''; continue; } // carries whatever CSRF-style token the page issued
+    const mapped = mapField_(f);
+    if (mapped === 'resume') { if (resumeBlob) payload[f.name] = resumeBlob; continue; }
+    if (mapped && profile[mapped]) { payload[f.name] = profile[mapped]; continue; }
+    if (f.required) return 'needs_manual'; // a required field we can't confidently answer -- e.g. a custom screening question
+  }
+
+  const res = UrlFetchApp.fetch(form.action, {
+    method: form.method, payload: payload, muteHttpExceptions: true, followRedirects: true
+  });
+  const code = res.getResponseCode();
+  return (code >= 200 && code < 400) ? 'submitted' : 'failed';
+}
+
+function mapField_(f) {
+  const key = (f.name + ' ' + f.id).toLowerCase();
+  if (/first.?name/.test(key)) return 'first_name';
+  if (/last.?name/.test(key)) return 'last_name';
+  if (/e.?mail/.test(key)) return 'email';
+  if (/phone/.test(key)) return 'phone';
+  if (/resume|cv/.test(key)) return 'resume';
+  if (/linkedin/.test(key)) return 'linkedin';
+  return '';
+}
+
+/** Minimal regex-based form scraper — Apps Script has no DOM/HTML parser available. */
+function parseForm_(html, pageUrl) {
+  const formMatch = html.match(/<form\b([^>]*)>([\s\S]*?)<\/form>/i);
+  if (!formMatch) return null;
+  const attrs = formMatch[1], body = formMatch[2];
+
+  const actionMatch = attrs.match(/action=["']([^"']+)["']/i);
+  let action = actionMatch ? actionMatch[1] : pageUrl;
+  if (action.indexOf('http') !== 0) {
+    const base = pageUrl.match(/^https?:\/\/[^/]+/i)[0];
+    action = (action.indexOf('/') === 0 ? base : base + '/') + action;
+  }
+  const methodMatch = attrs.match(/method=["']([^"']+)["']/i);
+  const method = methodMatch ? methodMatch[1].toLowerCase() : 'post';
+
+  const fields = [];
+  const inputRe = /<input\b([^>]*?)\/?>/gi;
+  let m;
+  while ((m = inputRe.exec(body))) fields.push(parseFieldAttrs_(m[1], 'text'));
+  const taRe = /<textarea\b([^>]*?)>/gi;
+  while ((m = taRe.exec(body))) fields.push(parseFieldAttrs_(m[1], 'text'));
+  const selRe = /<select\b([^>]*?)>/gi;
+  while ((m = selRe.exec(body))) fields.push(parseFieldAttrs_(m[1], 'select'));
+
+  return { action: action, method: method, fields: fields.filter(function (f) { return f.name; }) };
+}
+
+function parseFieldAttrs_(attrStr, fallbackType) {
+  const get = function (attr) {
+    const m = attrStr.match(new RegExp(attr + '=["\']([^"\']*)["\']', 'i'));
+    return m ? m[1] : '';
+  };
+  return {
+    type: (get('type') || fallbackType).toLowerCase(),
+    name: get('name'), id: get('id'), value: get('value'),
+    required: /\brequired\b/i.test(attrStr) || /aria-required=["']true["']/i.test(attrStr)
+  };
+}
 
 // ===================== Status automation (onEdit) =====================
 function handleEdit(e) {

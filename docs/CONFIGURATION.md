@@ -118,6 +118,70 @@ Hard cap on real sends per hourly sync. Only applies when auto-send is `TRUE`.
 Rows over the cap stay `Pending` and are retried next hour, so nothing is lost —
 it just spreads out. Keeps a runaway sync from mailing forty recruiters at 3am.
 
+### `Email guessing enabled`
+**Default:** `FALSE` · **Read by:** script
+
+Opt-in, off by default. When `TRUE`, a row with a published recruiter *name*
+but no published *email* gets exactly one candidate address built as
+`first.last@<Company Domain>`, kept only if that domain resolves an MX record.
+
+Be clear-eyed about what this is: a domain-level sanity check, **not** mailbox
+verification. There is no cross-check that this specific person's mailbox
+exists — the pattern is just the most common corporate convention. Expect some
+bounces and some wrong-recipient sends; that trade-off (free but unverified,
+instead of a paid finder API) was a deliberate choice. `Recruiter Email Source`
+records `Guessed` on every row this touches, so you can always see which
+addresses in your tracker are less trustworthy than a published one.
+
+This does **not** change whether anything gets sent — `Recruiter auto-send` and
+`Max sends per run` still gate every send, guessed or published, exactly as
+before. Turning this on without `Recruiter auto-send` just means more drafts
+land with a filled-in (guessed) `To:` instead of a `[DRAFT - add recruiter]`
+one addressed to you.
+
+---
+
+## Auto-apply
+
+Opt-in, off by default, and the least-tested capability in this project.
+Automates the plain public application form on a Greenhouse or Lever posting —
+no login, no account, no API key involved (there is no keyless "apply API";
+see [SECURITY.md](../SECURITY.md#guardrails-on-auto-apply)). Other job boards
+are untouched — `Auto-Apply Status` becomes `Not Applicable` for anything that
+isn't `boards.greenhouse.io` / `job-boards.greenhouse.io` / `jobs.lever.co`.
+
+### `Auto-apply enabled`
+**Default:** `FALSE` · **Read by:** script
+
+The kill-switch. Leave it off until you've verified the form-filling logic
+against at least one real posting — Greenhouse and Lever can change their page
+markup at any time, and there's no way to test that from outside a live run.
+
+### `Max applications per run`
+**Default:** `3` · **Read by:** script
+
+Hard cap per hourly sync, same spirit as `Max sends per run`. Starts low on
+purpose. Counts against the cap whether a submission succeeds, fails, or needs
+manual questions — each attempt is still one live request to a real employer's
+site.
+
+### `Applicant first name`, `Applicant last name`, `Applicant phone`, `Applicant LinkedIn URL`
+**Default:** blank · **Read by:** script
+
+The profile used to fill the application form. Email isn't a separate key — it
+reuses `Digest recipient` (or your account email if that's blank too). Leaving
+any of these blank just means that field goes unfilled; if the posting marks
+it required, the row becomes `Needs Manual Questions` instead of submitting
+half-empty.
+
+### What it won't do
+
+If a posting has a required field this can't confidently map to the profile
+above — a custom screening question, a salary expectation, a work-authorization
+dropdown — the row is marked `Needs Manual Questions` and **nothing is
+submitted**. It never guesses an answer on your behalf. See
+[SCHEMA.md](SCHEMA.md#auto-apply-status-y) for the full state machine.
+
 ---
 
 ## Notifications

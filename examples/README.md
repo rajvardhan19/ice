@@ -21,3 +21,9 @@ All companies, people, URLs, and salaries in these files are invented.
 Three rows should land in `Tracker`, the file should be renamed
 `[synced] Job Inbox - …`, and you should get a digest email. Delete the rows and
 the file afterwards; the URLs are fake and will fail a link check.
+
+The sample rows carry `Company Domain` and `Resume Link` values too, but with
+`Email guessing enabled` and `Auto-apply enabled` both off by default, neither
+does anything on this sample — they're just there to show the shape. See
+[CONFIGURATION.md](../docs/CONFIGURATION.md#email-guessing-enabled) if you want
+to test those opt-in passes deliberately.

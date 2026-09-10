@@ -1,6 +1,6 @@
 # Tracker schema
 
-21 columns, fixed order. Both halves depend on it: the agent emits it, the Apps
+26 columns, fixed order. Both halves depend on it: the agent emits it, the Apps
 Script reads it positionally, and the dashboard formulas reference the column
 letters directly.
 
@@ -33,6 +33,11 @@ Defined in [`JobTrackerSync.gs`](../apps-script/JobTrackerSync.gs) as `HEADERS`
 | 19 | S | Outreach Doc Link | agent | Doc the script reads for the email body |
 | 20 | T | Deadline | agent | `YYYY-MM-DD`. Triggers a calendar reminder |
 | 21 | U | Interview Date | you | Filling it creates a calendar event |
+| 22 | V | Company Domain | agent | e.g. `apple.com`. Fuel for opt-in email guessing only |
+| 23 | W | Resume Link | agent | Drive URL of the resume copy from step 4.1. What auto-apply uploads |
+| 24 | X | Application Method | script | Blank (manual) or `Auto — Greenhouse` / `Auto — Lever` |
+| 25 | Y | Auto-Apply Status | script | Dropdown, opt-in feature. Blank/`Not Applicable` unless `Auto-apply enabled` |
+| 26 | Z | Recruiter Email Source | script | `Published` / `Guessed` / blank. Opt-in — see [CONFIGURATION.md](CONFIGURATION.md#email-guessing-enabled) |
 
 Five columns are yours to edit by hand: `Application Status`, `Rejection Reason`,
 `Notes`, `Interview Date`, and — when you want to re-queue a message —
@@ -64,7 +69,25 @@ Five columns are yours to edit by hand: `Application Status`, `Rejection Reason`
 Only `Pending` is acted on, which is what makes outreach send-once. Set a row
 back to `Pending` to re-queue it.
 
-Both dropdowns are set to allow invalid values, so an unrecognised string won't
+### Auto-Apply Status (Y)
+
+Opt-in — see [CONFIGURATION.md](CONFIGURATION.md#auto-apply). Only acted on
+when `Auto-apply enabled` is `TRUE` and `Application Status` is still
+`Not Applied`.
+
+| Value | Set by | Meaning |
+| --- | --- | --- |
+| *(blank)* / `Pending` | — | Eligible for the next sync's auto-apply pass |
+| `Not Applicable` | script | The posting isn't on a supported ATS (Greenhouse/Lever) |
+| `Submitted` | script | Form POSTed successfully; `Application Status` flipped to `Applied` |
+| `Needs Manual Questions` | script | The form has a required field the script won't guess at — finish it by hand |
+| `Failed` | script | The request failed. Terminal — not retried, to avoid a duplicate submission |
+
+All three terminal states are exactly that: terminal. Nothing here is retried
+automatically, on the same "don't repeat an irreversible action" logic as
+`Outreach Status = Skipped`.
+
+All dropdowns are set to allow invalid values, so an unrecognised string won't
 block a paste — it just won't be picked up by anything.
 
 ## Dates

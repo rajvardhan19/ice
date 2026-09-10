@@ -8,6 +8,13 @@ Exclusions,"Senior, Staff, Principal, Lead, 5+ years, 7+ years, Director"
 Jobs per run,10
 Recruiter auto-send,FALSE
 Max sends per run,5
+Email guessing enabled,FALSE
+Auto-apply enabled,FALSE
+Max applications per run,3
+Applicant first name,Ada
+Applicant last name,Lovelace
+Applicant phone,
+Applicant LinkedIn URL,
 Digest enabled,TRUE
 Digest recipient,
 Follow-up days,7
