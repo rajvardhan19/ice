@@ -80,6 +80,24 @@ Your brief is too narrow. In order of impact: clear `Target companies`, widen
 agent only looks at postings from the last 7 days and discards unverifiable
 URLs — a genuinely quiet week is possible.
 
+### The run reports every fetch as blocked (EGRESS_BLOCKED)
+
+Step 3 requires fetching every job URL before emitting it — if WebFetch to
+job-board and ATS domains (Greenhouse, Lever, Ashby, LinkedIn, Indeed, etc.)
+is blocked while `github.com` and the search tool still work, that's the
+routine's own network sandbox, not this repo. There's no allowlist file here
+that reaches into a routine's execution environment.
+
+Correctly, the agent should refuse to emit unverified links rather than
+guess — a run that reports "no jobs added, zero writes" under this condition
+is behaving as designed, not broken.
+
+Check, in order: the routine's settings on claude.ai for any network/tool
+permission scope; whether recreating the routine from scratch changes
+anything; and if neither helps, treat it as a claude.ai routines product
+issue and report it to Anthropic support — the documented reference runner
+assumes full WebFetch access to arbitrary job postings.
+
 ### The same job appears twice
 
 Two different URLs for one posting (a company page and an aggregator). Dedup is
