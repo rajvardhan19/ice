@@ -92,11 +92,11 @@ Correctly, the agent should refuse to emit unverified links rather than
 guess — a run that reports "no jobs added, zero writes" under this condition
 is behaving as designed, not broken.
 
-Check, in order: the routine's settings on claude.ai for any network/tool
-permission scope; whether recreating the routine from scratch changes
-anything; and if neither helps, treat it as a claude.ai routines product
-issue and report it to Anthropic support — the documented reference runner
-assumes full WebFetch access to arbitrary job postings.
+Before assuming it's structural: if another routine on the same account
+successfully fetches the same kind of domains, this was a one-off failure on
+that run, not a systemic block — just retrigger it by hand. Only chase
+routine settings or file a report with Anthropic support if the block is
+reproducible across multiple runs.
 
 ### The same job appears twice
 
