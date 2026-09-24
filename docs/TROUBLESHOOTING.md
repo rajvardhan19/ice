@@ -92,11 +92,20 @@ Correctly, the agent should refuse to emit unverified links rather than
 guess — a run that reports "no jobs added, zero writes" under this condition
 is behaving as designed, not broken.
 
-Before assuming it's structural: if another routine on the same account
-successfully fetches the same kind of domains, this was a one-off failure on
-that run, not a systemic block — just retrigger it by hand. Only chase
-routine settings or file a report with Anthropic support if the block is
-reproducible across multiple runs.
+**Do not conclude from a *different* routine appearing to work that the block
+is one-off.** The routine sandbox blocks ATS domains fairly consistently while
+leaving `github.com` / `raw.githubusercontent.com` and web search reachable. A
+run that "succeeds" under the same block has usually downgraded its own
+verification standard — corroborating from search snippets and community
+new-grad aggregator repos, then emitting the job as though it were fetched.
+Those repos lag behind closed postings, so that path puts dead links in the
+tracker, which is exactly what the fetch rule exists to prevent.
+
+The fix is a tiered rule, not a retry: fetch when possible; on a *proxy block*
+(not a 404) allow corroboration from two independent sources and label the row
+`UNVERIFIED` in `Notes` so a human checks it before applying; skip entirely on
+404, closed postings, generic-index redirects, or a single weak source. Never
+record a URL as fetched when it was not.
 
 ### The same job appears twice
 
